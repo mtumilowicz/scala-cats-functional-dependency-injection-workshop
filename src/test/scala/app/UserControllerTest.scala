@@ -12,7 +12,7 @@ class UserControllerTest extends AnyFeatureSpec {
   def getBalance(id: String): Option[Int] = (for {
     implicit0 (env: ServicesEnv) <- DependencyConfig.appLive
   } yield UserController.getBalance(id))
-    .apply(())
+    .run()
 
   Feature("UserController") {
     Scenario("get balance for existing user") {

@@ -12,7 +12,7 @@ object Application extends IOApp {
   val program: Id[OptionT[IO, Int]] = (for {
     implicit0(env: ServicesEnv) <- DependencyConfig.appLive
   } yield UserController.getBalance("existing")
-    ).run(())
+    ).run()
 
   override def run(args: List[String]): IO[ExitCode] = for {
     balance <- program.value

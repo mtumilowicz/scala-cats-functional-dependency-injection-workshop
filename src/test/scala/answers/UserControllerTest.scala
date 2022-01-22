@@ -13,7 +13,7 @@ class UserControllerTest extends CatsEffectSuite {
   def getBalance(id: String): OptionT[IO, Int] = (for {
     implicit0 (env: ServicesEnv) <- DependencyConfig.appLive
   } yield UserController.getBalance(id))
-    .apply(())
+    .run()
 
     test("get balance for existing user") {
       getBalance("existing").value flatMap { result =>

@@ -12,6 +12,6 @@ object Application extends App {
     implicit0(env: ServicesEnv) <- DependencyConfig.appLive
   } yield UserController.getBalance("existing")
 
-  println(balance.run(()))
+  println(balance.run())
 
 }
