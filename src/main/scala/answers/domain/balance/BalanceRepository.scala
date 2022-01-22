@@ -1,6 +1,6 @@
 package answers.domain.balance
 
-import app.domain.user.User
+import answers.domain.user.User
 
 trait BalanceRepository {
   def getFor(user: User): Option[Int]

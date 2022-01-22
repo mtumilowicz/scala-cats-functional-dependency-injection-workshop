@@ -1,8 +1,8 @@
 package app
 
+import app.domain.ServicesEnv
 import app.gateway.UserController
 import app.infrastructure.DependencyConfig
-import domain.ServicesEnv
 import org.scalatest.GivenWhenThen
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper

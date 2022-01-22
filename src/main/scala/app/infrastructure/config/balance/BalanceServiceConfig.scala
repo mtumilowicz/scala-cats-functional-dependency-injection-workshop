@@ -1,8 +1,8 @@
 package app.infrastructure.config.balance
 
-import cats.data.Reader
 import app.core.Has
 import app.domain.balance.{BalanceRepository, BalanceService}
+import cats.data.Reader
 
 object BalanceServiceConfig {
   def live: Reader[Has[BalanceRepository], Has[BalanceService]] =

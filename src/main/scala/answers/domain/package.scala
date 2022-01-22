@@ -1,8 +1,8 @@
 package answers
 
-import app.core.Has
-import app.domain.balance.{BalanceRepository, BalanceService}
-import app.domain.user.{UserRepository, UserService}
+import answers.core.Has
+import answers.domain.balance.{BalanceRepository, BalanceService}
+import answers.domain.user.{UserRepository, UserService}
 
 package object domain {
   type ServicesEnv = Has[BalanceService] with Has[UserService]

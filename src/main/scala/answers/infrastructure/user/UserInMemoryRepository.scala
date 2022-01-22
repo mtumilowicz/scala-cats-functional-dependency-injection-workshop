@@ -1,6 +1,6 @@
 package answers.infrastructure.user
 
-import app.domain.user.{User, UserRepository}
+import answers.domain.user.{User, UserRepository}
 
 class UserInMemoryRepository extends UserRepository {
   override def getById(id: String): Option[User] =

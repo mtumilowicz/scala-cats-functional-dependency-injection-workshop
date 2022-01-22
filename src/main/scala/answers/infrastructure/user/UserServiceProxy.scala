@@ -1,11 +1,11 @@
 package answers.infrastructure.user
 
-import cats.data.{Kleisli, OptionT, ReaderT}
-import app.core.Has
-import app.domain.user.{User, UserService}
+import answers.core.Has
+import answers.domain.user.{User, UserService}
+import cats.data.{Kleisli, OptionT}
 import cats.effect.IO
 
 object UserServiceProxy {
   def getById(id: String): Kleisli[({type L[a] = OptionT[IO, a]})#L, Has[UserService], User] =
-    ReaderT { repo => repo.get.getById(id) }
+    Kleisli { _.get.getById(id) }
 }

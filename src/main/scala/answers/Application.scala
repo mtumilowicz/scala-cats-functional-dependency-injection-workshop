@@ -1,8 +1,8 @@
 package answers
 
-import app.domain.ServicesEnv
-import app.gateway.UserController
-import app.infrastructure.DependencyConfig
+import answers.domain.ServicesEnv
+import answers.gateway.UserController
+import answers.infrastructure.DependencyConfig
 
 object Application extends App {
 

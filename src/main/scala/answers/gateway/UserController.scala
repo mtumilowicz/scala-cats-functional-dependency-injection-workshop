@@ -1,9 +1,9 @@
 package answers.gateway
 
+import answers.domain._
+import answers.infrastructure.balance.BalanceServiceProxy
+import answers.infrastructure.user.UserServiceProxy
 import cats.implicits._
-import app.domain._
-import app.infrastructure.balance.BalanceServiceProxy
-import app.infrastructure.user.UserServiceProxy
 
 object UserController {
 

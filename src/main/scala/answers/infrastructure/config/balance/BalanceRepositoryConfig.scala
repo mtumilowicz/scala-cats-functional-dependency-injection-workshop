@@ -1,9 +1,9 @@
 package answers.infrastructure.config.balance
 
+import answers.core.Has
+import answers.domain.balance.BalanceRepository
+import answers.infrastructure.balance.BalanceInMemoryRepository
 import cats.data.Reader
-import app.core.Has
-import app.domain.balance.BalanceRepository
-import app.infrastructure.balance.BalanceInMemoryRepository
 
 object BalanceRepositoryConfig {
   def live: Reader[Any, Has[BalanceRepository]] =

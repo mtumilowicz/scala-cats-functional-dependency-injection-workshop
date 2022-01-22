@@ -1,9 +1,9 @@
 package answers.infrastructure.config.user
 
+import answers.core.Has
+import answers.domain.user
+import answers.domain.user.{UserRepository, UserService}
 import cats.data.Reader
-import app.core.Has
-import app.domain.user
-import app.domain.user.{UserRepository, UserService}
 
 object UserServiceConfig {
   def live: Reader[Has[UserRepository], Has[UserService]] =

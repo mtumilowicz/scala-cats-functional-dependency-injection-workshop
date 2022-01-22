@@ -1,11 +1,12 @@
 package answers.infrastructure.balance
 
-import cats.data.ReaderT
-import app.core.Has
-import app.domain.balance.BalanceService
-import app.domain.user.User
+import answers.core.Has
+import answers.domain.balance.BalanceService
+import answers.domain.user.User
+import cats.data.{Kleisli, OptionT}
+import cats.effect.IO
 
 object BalanceServiceProxy {
-  def getFor(user: User): ReaderT[Option, Has[BalanceService], Int] =
-    ReaderT { repo => repo.get.getFor(user) }
+  def getFor(user: User): Kleisli[({type L[a] = OptionT[IO, a]})#L, Has[BalanceService], Int] =
+    Kleisli { _.get.getFor(user) }
 }
