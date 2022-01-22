@@ -74,8 +74,8 @@
           } yield savedUser).run(Context(generateReqId()))
         ```
 ## monad transformers
-It turns out this is a well known fact: Monads do not compose, at least not generically.
-So, yeah, Monads may not compose generically, but you only need a flatMap (and a map) that works for Future[Option[A]].
+* Monads do not compose, at least not generically
+    * note that Functors compose, so we have problem only with `flatMap`
 * problem
     ```
     def findUserById(id: Long): Future[Option[User]] = ???
@@ -89,7 +89,9 @@ So, yeah, Monads may not compose generically, but you only need a flatMap (and a
     ```
     or in other words
     ```
+    val fl: Future[List[Int]] = ??
 
+    fl.flatMap(list => list.flatMap(f)) // two maps, one function
     ```
 * solution
     ```
@@ -125,16 +127,39 @@ So, yeah, Monads may not compose generically, but you only need a flatMap (and a
     ```
 * conclusion
     * we don’t need to know anything specific about the "outer" Monad
-    * On the other hand, see how we destructured the Option? That’s some specific knowledge about the “inner” Monad (Option in this case) that we need to have.
-    * we’ve just accidentally invented a Monad Transformer, usually named OptionT
-        * OptionT[F, A] is a flat version of F[Option[A]] which is a Monad itself
-* IO[Option[A]] might describe a computation that performs side-effect returning a single value that might or might not exists
+    * we have to know something about "inner" Monad
+        * see how we destructured the `Option`?
+    * we could abstract over the "outer" Monad
+        * usually named `OptionT`
+        * `OptionT[F, A]` is a flat version of `F[Option[A]]` which is a Monad itself
 
 ## Kleisli
-* At its core, Kleisli[F[_], A, B] is just a wrapper around the function A => F[B]
-* We may also have several functions which depend on some environment and want a nice way to compose these functions to ensure they all receive the same environment
-* Kleisli allows the composition of functions where the return type is a monadic value while the input to the next function is not.
-* Kleisli can be viewed as the monad transformer for functions.
+* `Kleisli[F[_], A, B]` is just a wrapper around the function `A => F[B]`
+* Kleisli can be viewed as the monad transformer for functions
+    * allows the composition of functions where the return type is a monadic
+    * problem
+        ```
+        val parse: String => Option[Int] =
+          s => if (s.matches("-?[0-9]+")) Some(s.toInt) else None
+
+        val reciprocal: Int => Option[Double] =
+          i => if (i != 0) Some(1.0 / i) else None
+
+        // you cannot compose it, you have to flatMap them
+        def parseAndReciprocal(s: String): Option[Double] = parse(s).flatMap(reciprocal)
+        ```
+    * solution
+        ```
+        val parseKleisli: Kleisli[Option,String,Int] =
+          Kleisli((s: String) => if (s.matches("-?[0-9]+")) Some(s.toInt) else None)
+
+        val reciprocalKleisli: Kleisli[Option, Int, Double] =
+          Kleisli(reciprocal)
+
+        val parseAndReciprocalKleisli = parseKleisli andThen reciprocalKleisli
+        ```
+* problem: several functions depend on some environment and we want a nice way to compose these functions to ensure
+they all receive the same environment
 * example
     ```
     val makeDB: Config => IO[Database]
@@ -147,11 +172,11 @@ So, yeah, Monads may not compose generically, but you only need a flatMap (and a
       cache <- makeCache(config)
       ...
     } yield someResult
-    vs
+* solution
     ```
-    val makeDB: Config => IO[Database]
-    val makeHttp: Config => IO[HttpClient]
-    val makeCache: Config => IO[RedisClient]
+    val makeDB: Kleisli[IO, Config, Database]
+    val makeHttp: Kleisli[IO, Config, HttpClient]
+    val makeCache: Kleisli[IO, Config, RedisClient]
 
     val program: Kleisli[IO, Config, Result] = for {
       db <- makeDB
@@ -159,33 +184,4 @@ So, yeah, Monads may not compose generically, but you only need a flatMap (and a
       cache <- makeCache
       ...
     } yield someResult
-    ```
-    and
-    ```
-    val parse: String => Option[Int] =
-      s => if (s.matches("-?[0-9]+")) Some(s.toInt) else None
-
-    val reciprocal: Int => Option[Double] =
-      i => if (i != 0) Some(1.0 / i) else None
-
-    parse("7")
-    parse("casa")
-    reciprocal(7)
-    reciprocal(0)
-
-    //FUNCTION COMPOSITION
-    def parseAndReciprocal(s: String): Option[Double] = parse(s).flatMap(reciprocal) // you cannot compose it, you have to flatMap
-
-    val parseKleisli: Kleisli[Option,String,Int] =
-      Kleisli((s: String) => if (s.matches("-?[0-9]+")) Some(s.toInt) else None)
-
-    val reciprocalKleisli: Kleisli[Option, Int, Double] =
-      Kleisli(reciprocal)
-
-    parseKleisli("7")
-    parseKleisli("casa")
-    reciprocalKleisli(7)
-    reciprocalKleisli(0)
-
-    val parseAndReciprocalKleisli = parseKleisli andThen reciprocalKleisli
     ```
