@@ -7,7 +7,7 @@ import org.scalatest.GivenWhenThen
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
-class UserControllerTest extends AnyFeatureSpec with GivenWhenThen {
+class UserControllerTest extends AnyFeatureSpec {
 
   def getBalance(id: String): Option[Int] = (for {
     implicit0 (env: ServicesEnv) <- DependencyConfig.appLive
