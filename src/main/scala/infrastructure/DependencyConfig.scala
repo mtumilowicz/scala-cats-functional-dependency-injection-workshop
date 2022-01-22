@@ -3,6 +3,8 @@ package infrastructure
 import cats.Id
 import cats.data.Kleisli
 import domain._
+import infrastructure.config.balance.{BalanceRepositoryConfig, BalanceServiceConfig}
+import infrastructure.config.user.{UserRepositoryConfig, UserServiceConfig}
 
 object DependencyConfig {
 

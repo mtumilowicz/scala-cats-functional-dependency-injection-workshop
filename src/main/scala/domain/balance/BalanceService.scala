@@ -1,4 +1,6 @@
-package domain
+package domain.balance
+
+import domain.user.User
 
 case class BalanceService(repository: BalanceRepository) {
   def getFor(user: User): Option[Int] = repository.getFor(user)

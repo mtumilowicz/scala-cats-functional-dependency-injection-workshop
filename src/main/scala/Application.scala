@@ -1,11 +1,14 @@
+import cats.Id
+import cats.data.Kleisli
+import domain.ServicesEnv
 import gateway.UserController
 import infrastructure._
 
 object Application extends App {
 
   val balance = for {
-    env <- DependencyConfig.appLive
-  } yield UserController.getBalance("1").apply(env)
+    implicit0 (env: ServicesEnv) <- DependencyConfig.appLive
+  } yield UserController.getBalance("existing")
 
   println(balance.apply(()))
 
