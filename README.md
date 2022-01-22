@@ -1,21 +1,33 @@
 # scala-cats-functional-dependency-injection-workshop
 
-* https://github.com/mtumilowicz/scala213-functional-programming-functor-monoid-monad-workshop
-* https://github.com/mtumilowicz/scala-cats-implicit-workshop
-* https://github.com/mtumilowicz/java11-category-theory-reader-functor
-* https://github.com/mtumilowicz/scala-http4s-zio-fs2-doobie-workshop
-* https://github.com/kitlangton/zio-from-scatch
-* https://github.com/mtumilowicz/java11-category-theory-kleisli-category
-* https://github.com/mtumilowicz/scala212-category-theory-kleisli-writer-category-functor
-* https://medium.com/@alexander.zaidel/composing-functions-with-reader-monad-f3e471958e2a
-* https://fares.codes/posts/cats-kleisli/
-* https://stackoverflow.com/questions/61899370/when-should-one-use-a-kleisli
-* https://medium.com/@supermanue/understanding-kleisli-in-scala-9c42ec1a5977
-* https://typelevel.org/cats/datatypes/kleisli.html
-* https://blog.softwaremill.com/kleisli-category-from-theory-to-cats-fbd140bf396e
+* references
+    * https://github.com/kitlangton/zio-from-scatch
+    * https://medium.com/@alexander.zaidel/composing-functions-with-reader-monad-f3e471958e2a
+    * https://fares.codes/posts/cats-kleisli/
+    * https://stackoverflow.com/questions/61899370/when-should-one-use-a-kleisli
+    * https://medium.com/@supermanue/understanding-kleisli-in-scala-9c42ec1a5977
+    * https://typelevel.org/cats/datatypes/kleisli.html
+    * https://blog.softwaremill.com/kleisli-category-from-theory-to-cats-fbd140bf396e
 
-* The main purpose of the Reader monad is to compose functions and delay dependency injection phase until the later moment
-* Combining Reader together with other monads requires to write a bit of boilerplate
+## preface
+* goals of this workshop:
+    * showing the functional approach to dependency injection
+    * practicing using effects for modelling domain
+    * example of conditionally added methods to the type (based on the type)
+* task: rewrite the application from `app` package using effects
+    * answers: `answers` package
+* it can be worthwhile to take a look at
+    * type projection: https://github.com/mtumilowicz/scala213-functional-programming-functor-monoid-monad-workshop
+    * conditionally adding methods (`<:<`): https://github.com/mtumilowicz/scala-cats-implicit-workshop
+    * Reader: https://github.com/mtumilowicz/java11-category-theory-reader-functor
+    * Kleisli
+        * https://github.com/mtumilowicz/java11-category-theory-kleisli-category
+        * https://github.com/mtumilowicz/scala212-category-theory-kleisli-writer-category-functor
+    * heterogenous map (`Has`) and effects: https://github.com/mtumilowicz/scala-http4s-zio-fs2-doobie-workshop
+
+## Reader
+* main purpose: compose functions and delay dependency injection phase until the later moment
+* drawback: combining Reader together with other monads requires to write a bit of boilerplate
     ```
     def validateUser(name: Name, age: Age): Reader[Env, Try[User]] =
         for {
@@ -30,7 +42,7 @@
 
     private def validateAge(age: Age): Reader[Env, Try[Age]]
     ```
-* and ReaderT
+* solution: `ReaderT` (monad transformer)
     ```
     def validateUser(name: Name, age: Age): ReaderT[Try, Env, User] =
       for {
@@ -42,9 +54,10 @@
 
     private def validateAge(age: Age): ReaderT[Try, Env, Age]
     ```
-* Reader Monad can also be used for passing a Diagnostic Context .
-    * Image that you have to add requestId to every log message in your code base, thus you are forced to pass requestId in every function.
-    * example
+* can also be used for passing a "Diagnostic Context"
+    * example: add `requestId` to every log message in your code base
+        * make `requestId` accessible in every function
+    * solution
         ```
         def saveUser(user: User): = ReaderT[Try, Context, User] { context =>
           logger.debug(s"reqId: ${context.requestId} saveUser ${user}")
