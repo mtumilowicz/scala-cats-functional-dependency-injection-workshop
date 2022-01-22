@@ -1,7 +1,5 @@
 package gateway
 
-import cats.Id
-import cats.data.Kleisli
 import domain.ServicesEnv
 import infrastructure.DependencyConfig
 import org.scalatest.GivenWhenThen

@@ -1,6 +1,5 @@
 package gateway
 
-import cats.data.Kleisli
 import cats.implicits._
 import domain._
 import infrastructure.balance.BalanceServiceProxy

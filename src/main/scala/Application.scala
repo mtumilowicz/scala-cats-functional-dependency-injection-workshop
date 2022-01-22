@@ -1,5 +1,3 @@
-import cats.Id
-import cats.data.Kleisli
 import domain.ServicesEnv
 import gateway.UserController
 import infrastructure._
