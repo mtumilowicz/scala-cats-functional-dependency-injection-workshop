@@ -12,5 +12,5 @@ object UserController {
     user <- UserServiceProxy.getById(id)
     balance <- BalanceServiceProxy.getFor(user)
   } yield balance)
-    .apply(env)
+    .run(env)
 }
