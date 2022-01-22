@@ -7,9 +7,9 @@ import cats.implicits._
 
 object UserController {
 
-  def getBalance(id: String)(implicit env: ServicesEnv): Option[Int] = (for {
-    user <- UserServiceProxy.getById(id)
-    balance <- BalanceServiceProxy.getFor(user)
-  } yield balance)
-    .run(env)
+  def getBalance(id: String)(implicit env: ServicesEnv): Option[Int] =
+    (for {
+      user <- UserServiceProxy.getById(id)
+      balance <- BalanceServiceProxy.getFor(user)
+    } yield balance).run(env)
 }

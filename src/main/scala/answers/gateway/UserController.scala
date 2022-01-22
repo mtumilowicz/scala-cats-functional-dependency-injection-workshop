@@ -8,9 +8,9 @@ import cats.effect.IO
 
 object UserController {
 
-  def getBalance(id: String)(implicit env: ServicesEnv): OptionT[IO, Int] = (for {
-    user <- UserServiceProxy.getById(id)
-    balance <- BalanceServiceProxy.getFor(user)
-  } yield balance)
-    .run(env)
+  def getBalance(id: String)(implicit env: ServicesEnv): OptionT[IO, Int] =
+    (for {
+      user <- UserServiceProxy.getById(id)
+      balance <- BalanceServiceProxy.getFor(user)
+    } yield balance).run(env)
 }
