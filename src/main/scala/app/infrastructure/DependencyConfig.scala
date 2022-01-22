@@ -5,6 +5,7 @@ import app.infrastructure.config.balance.{BalanceRepositoryConfig, BalanceServic
 import app.infrastructure.config.user.{UserRepositoryConfig, UserServiceConfig}
 import cats.Id
 import cats.data.Kleisli
+import cats.implicits._
 
 object DependencyConfig {
 
@@ -18,6 +19,6 @@ object DependencyConfig {
     balanceService <- BalanceServiceConfig.live
   } yield userService ++ balanceService
 
-  val appLive: Kleisli[Id, Any, ServicesEnv] = repositories.andThen(services)
+  val appLive: Kleisli[Id, Any, ServicesEnv] = repositories >>> services
 
 }
