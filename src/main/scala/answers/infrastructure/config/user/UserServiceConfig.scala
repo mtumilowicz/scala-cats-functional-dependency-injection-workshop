@@ -1,6 +1,6 @@
 package answers.infrastructure.config.user
 
-import answers.core.Has
+import common.Has
 import answers.domain.user
 import answers.domain.user.{UserRepository, UserService}
 import cats.data.Reader

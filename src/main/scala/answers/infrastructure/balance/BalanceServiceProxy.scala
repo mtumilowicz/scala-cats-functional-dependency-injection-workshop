@@ -1,6 +1,6 @@
 package answers.infrastructure.balance
 
-import answers.core.Has
+import common.Has
 import answers.domain.balance.BalanceService
 import answers.domain.user.User
 import cats.data.{Kleisli, OptionT}

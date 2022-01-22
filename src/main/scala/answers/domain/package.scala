@@ -1,6 +1,6 @@
 package answers
 
-import answers.core.Has
+import common.Has
 import answers.domain.balance.{BalanceRepository, BalanceService}
 import answers.domain.user.{UserRepository, UserService}
 

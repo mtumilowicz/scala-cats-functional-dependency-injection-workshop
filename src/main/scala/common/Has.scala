@@ -1,4 +1,4 @@
-package app.core
+package common
 
 import scala.reflect.ClassTag
 

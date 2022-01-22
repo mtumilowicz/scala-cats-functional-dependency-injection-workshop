@@ -1,6 +1,6 @@
 package answers.infrastructure.config.balance
 
-import answers.core.Has
+import common.Has
 import answers.domain.balance.BalanceRepository
 import answers.infrastructure.balance.BalanceInMemoryRepository
 import cats.data.Reader
