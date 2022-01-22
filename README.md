@@ -12,6 +12,7 @@
 * https://stackoverflow.com/questions/61899370/when-should-one-use-a-kleisli
 * https://medium.com/@supermanue/understanding-kleisli-in-scala-9c42ec1a5977
 * https://typelevel.org/cats/datatypes/kleisli.html
+* https://blog.softwaremill.com/kleisli-category-from-theory-to-cats-fbd140bf396e
 
 * The main purpose of the Reader monad is to compose functions and delay dependency injection phase until the later moment
 * Combining Reader together with other monads requires to write a bit of boilerplate
