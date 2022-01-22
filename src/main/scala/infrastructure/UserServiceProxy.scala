@@ -2,11 +2,16 @@ package infrastructure
 
 import cats.data.{Reader, ReaderT}
 import core.Has
-import domain.{User, UserRepository, UserService}
+import domain.{BalanceRepository, User, UserRepository, UserService}
 
 object UserServiceConfig {
   def live: Reader[Has[UserRepository], Has[UserService]] =
     Reader { repo => Has.succeed(UserService(repo.get)) }
+}
+
+object UserRepositoryConfig {
+  def live: Reader[Any, Has[UserRepository]] =
+    Reader { _ => Has.succeed(new UserInMemoryRepository()) }
 }
 
 object UserServiceProxy {

@@ -9,6 +9,11 @@ object BalanceServiceConfig {
     Reader { repo => Has.succeed(BalanceService(repo.get)) }
 }
 
+object BalanceRepositoryConfig {
+  def live: Reader[Any, Has[BalanceRepository]] =
+    Reader { _ => Has.succeed(new BalanceInMemoryRepository()) }
+}
+
 object BalanceServiceProxy {
   def getFor(user: User): ReaderT[Option, Has[BalanceService], Int] =
     ReaderT { repo => repo.get.getFor(user) }
