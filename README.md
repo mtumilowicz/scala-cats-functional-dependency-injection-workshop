@@ -9,6 +9,9 @@
 * https://github.com/mtumilowicz/scala212-category-theory-kleisli-writer-category-functor
 * https://medium.com/@alexander.zaidel/composing-functions-with-reader-monad-f3e471958e2a
 * https://fares.codes/posts/cats-kleisli/
+* https://stackoverflow.com/questions/61899370/when-should-one-use-a-kleisli
+* https://medium.com/@supermanue/understanding-kleisli-in-scala-9c42ec1a5977
+* https://typelevel.org/cats/datatypes/kleisli.html
 
 * The main purpose of the Reader monad is to compose functions and delay dependency injection phase until the later moment
 * Combining Reader together with other monads requires to write a bit of boilerplate
@@ -55,14 +58,61 @@
         ```
 * monad transformers
 * Kleisli
+    * At its core, Kleisli[F[_], A, B] is just a wrapper around the function A => F[B]
+    * We may also have several functions which depend on some environment and want a nice way to compose these functions to ensure they all receive the same environment
     * Kleisli allows the composition of functions where the return type is a monadic value while the input to the next function is not.
+    * Kleisli can be viewed as the monad transformer for functions.
     * example
         ```
-        val getValueFromDB: Unit => String = ...
-        val transformValue: String => String = ...
-        val saveValueToDB: String => Unit = ...
+        val makeDB: Config => IO[Database]
+        val makeHttp: Config => IO[HttpClient]
+        val makeCache: Config => IO[RedisClient]
 
-        val result = saveValueToDB compose transformValue compose getValueFromDB
-        result()
+        def program(config: Config) = for {
+          db <- makeDB(config)
+          http <- makeHttp(config)
+          cache <- makeCache(config)
+          ...
+        } yield someResult
+        vs
         ```
-        
+        val makeDB: Config => IO[Database]
+        val makeHttp: Config => IO[HttpClient]
+        val makeCache: Config => IO[RedisClient]
+
+        val program: Kleisli[IO, Config, Result] = for {
+          db <- makeDB
+          http <- makeHttp
+          cache <- makeCache
+          ...
+        } yield someResult
+        ```
+        and
+        ```
+        val parse: String => Option[Int] =
+          s => if (s.matches("-?[0-9]+")) Some(s.toInt) else None
+
+        val reciprocal: Int => Option[Double] =
+          i => if (i != 0) Some(1.0 / i) else None
+
+        parse("7")
+        parse("casa")
+        reciprocal(7)
+        reciprocal(0)
+
+        //FUNCTION COMPOSITION
+        def parseAndReciprocal(s: String): Option[Double] = parse(s).flatMap(reciprocal) // you cannot compose it, you have to flatMap
+
+        val parseKleisli: Kleisli[Option,String,Int] =
+          Kleisli((s: String) => if (s.matches("-?[0-9]+")) Some(s.toInt) else None)
+
+        val reciprocalKleisli: Kleisli[Option, Int, Double] =
+          Kleisli(reciprocal)
+
+        parseKleisli("7")
+        parseKleisli("casa")
+        reciprocalKleisli(7)
+        reciprocalKleisli(0)
+
+        val parseAndReciprocalKleisli = parseKleisli andThen reciprocalKleisli
+        ```
