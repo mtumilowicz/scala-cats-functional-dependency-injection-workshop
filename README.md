@@ -8,6 +8,9 @@
     * https://medium.com/@supermanue/understanding-kleisli-in-scala-9c42ec1a5977
     * https://typelevel.org/cats/datatypes/kleisli.html
     * https://blog.softwaremill.com/kleisli-category-from-theory-to-cats-fbd140bf396e
+    * https://blog.buildo.io/monad-transformers-for-the-working-programmer-aa7e981190e7
+    * https://blog.softwaremill.com/monad-transformers-and-cats-3-tips-for-beginners-196fabe58daa
+    * [Monad transformers down to earth by Gabriele Petronella](https://www.youtube.com/watch?v=jd5e71nFEZM)
 
 ## preface
 * goals of this workshop:
@@ -71,7 +74,61 @@
           } yield savedUser).run(Context(generateReqId()))
         ```
 ## monad transformers
+It turns out this is a well known fact: Monads do not compose, at least not generically.
+So, yeah, Monads may not compose generically, but you only need a flatMap (and a map) that works for Future[Option[A]].
+* problem
+    ```
+    def findUserById(id: Long): Future[Option[User]] = ???
+    def findAddressByUser(user: User): Future[Option[Address]] = ???
 
+    def findAddressByUserId(id: Long): Future[Option[Address]] =
+      for {
+        user    <- findUserById(id) // user has type: Option[User]
+        address <- findAddressByUser(user) // error: type mismatch;
+      } yield address
+    ```
+    or in other words
+    ```
+
+    ```
+* solution
+    ```
+    case class FutureOpt[A](value: Future[Option[A]]) {
+
+      def map[B](f: A => B): FutureOpt[B] =
+        FutureOpt(value.map(optA => optA.map(f)))
+      def flatMap[B](f: A => FutureOpt[B]): FutureOpt[B] =
+        FutureOpt(value.flatMap(opt => opt match {
+          case Some(a) => f(a).value
+          case None => Future.successful(None)
+        }))
+    }
+
+    def findAddressByUserId(id: Long): Future[Option[Address]] =
+      (for {
+        user    <- FutOpt(findUserById(id))
+        address <- FutOpt(findAddressByUser(user))
+      } yield address).value
+    ```
+* and suppose we want to have wrapper for `List[Future]`
+    ```
+    case class ListOpt[A](value: List[Option[A]]) {
+
+     def map[B](f: A => B): ListOpt[B] =
+        ListOpt(value.map(optA => optA.map(f)))
+     def flatMap[B](f: A => ListOpt[B]): ListOpt[B] =
+        ListOpt(value.flatMap(opt => opt match {
+          case Some(a) => f(a).value
+          case None => List(None)
+        }))
+    }
+    ```
+* conclusion
+    * we don’t need to know anything specific about the "outer" Monad
+    * On the other hand, see how we destructured the Option? That’s some specific knowledge about the “inner” Monad (Option in this case) that we need to have.
+    * we’ve just accidentally invented a Monad Transformer, usually named OptionT
+        * OptionT[F, A] is a flat version of F[Option[A]] which is a Monad itself
+* IO[Option[A]] might describe a computation that performs side-effect returning a single value that might or might not exists
 
 ## Kleisli
 * At its core, Kleisli[F[_], A, B] is just a wrapper around the function A => F[B]
