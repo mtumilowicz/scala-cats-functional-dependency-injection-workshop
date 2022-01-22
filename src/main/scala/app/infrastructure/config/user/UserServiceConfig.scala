@@ -1,9 +1,9 @@
-package infrastructure.config.user
+package app.infrastructure.config.user
 
 import cats.data.Reader
-import core.Has
-import domain.user
-import domain.user.{UserRepository, UserService}
+import app.core.Has
+import app.domain.user
+import app.domain.user.{UserRepository, UserService}
 
 object UserServiceConfig {
   def live: Reader[Has[UserRepository], Has[UserService]] =

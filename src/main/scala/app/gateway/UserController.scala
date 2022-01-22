@@ -1,9 +1,9 @@
-package gateway
+package app.gateway
 
 import cats.implicits._
-import domain._
-import infrastructure.balance.BalanceServiceProxy
-import infrastructure.user.UserServiceProxy
+import app.domain._
+import app.infrastructure.balance.BalanceServiceProxy
+import app.infrastructure.user.UserServiceProxy
 
 object UserController {
 

@@ -1,9 +1,9 @@
-package infrastructure.balance
+package app.infrastructure.balance
 
 import cats.data.ReaderT
-import core.Has
-import domain.balance.BalanceService
-import domain.user.User
+import app.core.Has
+import app.domain.balance.BalanceService
+import app.domain.user.User
 
 object BalanceServiceProxy {
   def getFor(user: User): ReaderT[Option, Has[BalanceService], Int] =

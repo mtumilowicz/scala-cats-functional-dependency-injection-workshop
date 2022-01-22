@@ -1,10 +1,10 @@
-package infrastructure
+package app.infrastructure
 
 import cats.Id
 import cats.data.Kleisli
-import domain._
-import infrastructure.config.balance.{BalanceRepositoryConfig, BalanceServiceConfig}
-import infrastructure.config.user.{UserRepositoryConfig, UserServiceConfig}
+import app.domain._
+import app.infrastructure.config.balance.{BalanceRepositoryConfig, BalanceServiceConfig}
+import app.infrastructure.config.user.{UserRepositoryConfig, UserServiceConfig}
 
 object DependencyConfig {
 

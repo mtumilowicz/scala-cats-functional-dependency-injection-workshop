@@ -1,9 +1,9 @@
-package infrastructure.config.user
+package app.infrastructure.config.user
 
 import cats.data.Reader
-import core.Has
-import domain.user.UserRepository
-import infrastructure.user.UserInMemoryRepository
+import app.core.Has
+import app.domain.user.UserRepository
+import app.infrastructure.user.UserInMemoryRepository
 
 object UserRepositoryConfig {
   def live: Reader[Any, Has[UserRepository]] =
