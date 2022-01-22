@@ -70,63 +70,65 @@
             savedUser <- UserRepository.saveUser(user)
           } yield savedUser).run(Context(generateReqId()))
         ```
-* monad transformers
-* Kleisli
-    * At its core, Kleisli[F[_], A, B] is just a wrapper around the function A => F[B]
-    * We may also have several functions which depend on some environment and want a nice way to compose these functions to ensure they all receive the same environment
-    * Kleisli allows the composition of functions where the return type is a monadic value while the input to the next function is not.
-    * Kleisli can be viewed as the monad transformer for functions.
-    * example
-        ```
-        val makeDB: Config => IO[Database]
-        val makeHttp: Config => IO[HttpClient]
-        val makeCache: Config => IO[RedisClient]
+## monad transformers
 
-        def program(config: Config) = for {
-          db <- makeDB(config)
-          http <- makeHttp(config)
-          cache <- makeCache(config)
-          ...
-        } yield someResult
-        vs
-        ```
-        val makeDB: Config => IO[Database]
-        val makeHttp: Config => IO[HttpClient]
-        val makeCache: Config => IO[RedisClient]
 
-        val program: Kleisli[IO, Config, Result] = for {
-          db <- makeDB
-          http <- makeHttp
-          cache <- makeCache
-          ...
-        } yield someResult
-        ```
-        and
-        ```
-        val parse: String => Option[Int] =
-          s => if (s.matches("-?[0-9]+")) Some(s.toInt) else None
+## Kleisli
+* At its core, Kleisli[F[_], A, B] is just a wrapper around the function A => F[B]
+* We may also have several functions which depend on some environment and want a nice way to compose these functions to ensure they all receive the same environment
+* Kleisli allows the composition of functions where the return type is a monadic value while the input to the next function is not.
+* Kleisli can be viewed as the monad transformer for functions.
+* example
+    ```
+    val makeDB: Config => IO[Database]
+    val makeHttp: Config => IO[HttpClient]
+    val makeCache: Config => IO[RedisClient]
 
-        val reciprocal: Int => Option[Double] =
-          i => if (i != 0) Some(1.0 / i) else None
+    def program(config: Config) = for {
+      db <- makeDB(config)
+      http <- makeHttp(config)
+      cache <- makeCache(config)
+      ...
+    } yield someResult
+    vs
+    ```
+    val makeDB: Config => IO[Database]
+    val makeHttp: Config => IO[HttpClient]
+    val makeCache: Config => IO[RedisClient]
 
-        parse("7")
-        parse("casa")
-        reciprocal(7)
-        reciprocal(0)
+    val program: Kleisli[IO, Config, Result] = for {
+      db <- makeDB
+      http <- makeHttp
+      cache <- makeCache
+      ...
+    } yield someResult
+    ```
+    and
+    ```
+    val parse: String => Option[Int] =
+      s => if (s.matches("-?[0-9]+")) Some(s.toInt) else None
 
-        //FUNCTION COMPOSITION
-        def parseAndReciprocal(s: String): Option[Double] = parse(s).flatMap(reciprocal) // you cannot compose it, you have to flatMap
+    val reciprocal: Int => Option[Double] =
+      i => if (i != 0) Some(1.0 / i) else None
 
-        val parseKleisli: Kleisli[Option,String,Int] =
-          Kleisli((s: String) => if (s.matches("-?[0-9]+")) Some(s.toInt) else None)
+    parse("7")
+    parse("casa")
+    reciprocal(7)
+    reciprocal(0)
 
-        val reciprocalKleisli: Kleisli[Option, Int, Double] =
-          Kleisli(reciprocal)
+    //FUNCTION COMPOSITION
+    def parseAndReciprocal(s: String): Option[Double] = parse(s).flatMap(reciprocal) // you cannot compose it, you have to flatMap
 
-        parseKleisli("7")
-        parseKleisli("casa")
-        reciprocalKleisli(7)
-        reciprocalKleisli(0)
+    val parseKleisli: Kleisli[Option,String,Int] =
+      Kleisli((s: String) => if (s.matches("-?[0-9]+")) Some(s.toInt) else None)
 
-        val parseAndReciprocalKleisli = parseKleisli andThen reciprocalKleisli
-        ```
+    val reciprocalKleisli: Kleisli[Option, Int, Double] =
+      Kleisli(reciprocal)
+
+    parseKleisli("7")
+    parseKleisli("casa")
+    reciprocalKleisli(7)
+    reciprocalKleisli(0)
+
+    val parseAndReciprocalKleisli = parseKleisli andThen reciprocalKleisli
+    ```
