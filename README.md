@@ -23,6 +23,7 @@
     * answers: `answers` package
 * it can be worthwhile to take a look at
     * type projection: https://github.com/mtumilowicz/scala213-functional-programming-functor-monoid-monad-workshop
+        * https://github.com/typelevel/kind-projector
     * conditionally adding methods (`<:<`): https://github.com/mtumilowicz/scala-cats-implicit-workshop
     * Reader: https://github.com/mtumilowicz/java11-category-theory-reader-functor
     * Kleisli
