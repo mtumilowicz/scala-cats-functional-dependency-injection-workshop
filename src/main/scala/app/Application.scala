@@ -1,10 +1,8 @@
 package app
 
 import app.domain.ServicesEnv
-import app.domain.user.User
 import app.gateway.UserController
 import app.infrastructure.DependencyConfig
-import cats.data.Reader
 
 object Application extends App {
 
