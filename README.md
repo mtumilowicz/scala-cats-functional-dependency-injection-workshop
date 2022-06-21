@@ -151,10 +151,10 @@
         // you cannot compose it, you have to flatMap them
         def parseAndReciprocal(s: String): Option[Double] = parse(s).flatMap(reciprocal)
         ```
-    * solution
+    * solution (wrapping functions declared above)
         ```
         val parseKleisli: Kleisli[Option,String,Int] =
-          Kleisli((s: String) => if (s.matches("-?[0-9]+")) Some(s.toInt) else None)
+          Kleisli(parse)
 
         val reciprocalKleisli: Kleisli[Option, Int, Double] =
           Kleisli(reciprocal)
