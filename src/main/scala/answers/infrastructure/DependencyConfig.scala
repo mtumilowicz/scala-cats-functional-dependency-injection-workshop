@@ -21,4 +21,7 @@ object DependencyConfig {
 
   val appLive: Kleisli[Id, Any, ServicesEnv] = repositories >>> services
 
+  // usually different environment for tests: inMemory repositories, etc
+  val appTest: Kleisli[Id, Any, ServicesEnv] = repositories >>> services
+
 }
