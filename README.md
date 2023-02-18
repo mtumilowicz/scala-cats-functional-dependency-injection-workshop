@@ -13,6 +13,9 @@
     * https://blog.buildo.io/monad-transformers-for-the-working-programmer-aa7e981190e7
     * https://blog.softwaremill.com/monad-transformers-and-cats-3-tips-for-beginners-196fabe58daa
     * [Monad transformers down to earth by Gabriele Petronella](https://www.youtube.com/watch?v=jd5e71nFEZM)
+    * https://github.com/zio/izumi-reflect
+    * https://www.baeldung.com/scala/type-information-at-runtime
+    * https://dotty.epfl.ch/api/scala/reflect/ClassTag.html
 
 ## preface
 * goals of this workshop:
@@ -187,4 +190,27 @@ they all receive the same environment
       cache <- makeCache
       ...
     } yield someResult
+    ```
+## izumi Tag
+* is a fast, lightweight, portable and efficient alternative for TypeTag from scala-reflect
+* compiles faster, runs a lot faster than scala-reflect and is fully immutable and thread-safe
+* why we need tags?
+  * type erasure - compiler removes all generic type information at compile-time, leaving 
+  this information missing at runtime
+  * tags are solutions to get the type information of the erased type at runtime
+* example
+  * problem: heterogenous map of dependencies
+    * service type -> service instance
+  * solution
+    ```
+    final case class Has[A](map: Map[String, Any])
+
+    implicit class HasOps[Self <: Has[_]](self: Self) {
+    
+      def get[A](implicit ev: Self <:< Has[A], tag: Tag[A]): A =
+        self.map(tag.toString).asInstanceOf[A]
+  
+      def ++[That <: Has[_]](that: That): Self with That =
+        Has(self.map ++ that.map).asInstanceOf[Self with That]
+    }
     ```
